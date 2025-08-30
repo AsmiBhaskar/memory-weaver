@@ -1,38 +1,166 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+/* src/App.css */
+.app {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f7f7fa;
   min-height: 100vh;
+  padding: 30px;
+}
+
+h1 {
+  color: #4FC3F7;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.emotion-input {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* Input Methods */
+.input-methods {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.method-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95em;
+}
+
+.method-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.method-button.active {
+  background: #4FC3F7;
+  color: white;
+}
+
+/* Webcam */
+.webcam-container {
+  width: 100%;
+  max-width: 640px;
+  margin: 20px auto;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.webcam-feed {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Voice Input */
+.voice-indicator {
+  background: #e3f2fd;
+  padding: 15px;
+  border-radius: 10px;
+  margin: 20px 0;
+  text-align: center;
+  animation: pulse 2s infinite;
+}
+
+.voice-active {
+  background: #81d4fa;
+  color: #fff;
+}
+
+.keyword-hints {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 8px;
+}
+
+.emotion-slider label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.slider {
+  width: 100%;
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 4px;
+  background: #e0e0e0;
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #4FC3F7;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.environment-visualizer {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  color: #fff;
+  min-height: 400px;
+  position: relative;
 }
 
-.App-link {
-  color: #61dafb;
+.audio-engine {
+  background: #e3f2fd;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 20px 0;
+  text-align: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.emotion-history {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.emotion-history ul {
+  list-style: none;
+  padding: 0;
+}
+
+.emotion-history li {
+  margin-bottom: 8px;
+  font-size: 0.95em;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border-radius: 6px;
+  background: #f8f9fa;
+}
+
+@keyframes pulse {
+  0% { background-color: #e3f2fd; }
+  50% { background-color: #bbdefb; }
+  100% { background-color: #e3f2fd; }
 }
