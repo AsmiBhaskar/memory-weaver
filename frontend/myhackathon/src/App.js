@@ -17,7 +17,7 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
   const [emotionHistory, setEmotionHistory] = useState([]);
 
-  // Initialize WebSocket connection
+  // Initialize WebSocket connection and handle online/offline states
   useEffect(() => {
     websocketService.connect();
     const unsubscribe = websocketService.subscribe((data) => {
@@ -26,14 +26,36 @@ function App() {
           ...prevEmotion,
           ...data.data
         }));
+      } else if (data.type === 'connection_status') {
+        setIsConnected(data.data.isConnected);
       }
     });
 
     // Load emotion history
     loadEmotionHistory();
 
+    // Handle online/offline status
+    const handleOnline = () => {
+      console.log('App is online');
+      setIsConnected(true);
+      loadEmotionHistory(); // Reload history when coming back online
+    };
+
+    const handleOffline = () => {
+      console.log('App is offline');
+      setIsConnected(false);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    // Set initial online status
+    setIsConnected(navigator.onLine);
+
     return () => {
       unsubscribe();
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
     };
   }, []);
 

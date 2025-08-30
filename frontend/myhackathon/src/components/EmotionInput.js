@@ -7,13 +7,7 @@ const EmotionInput = ({ emotion, onChange, isConnected }) => {
   const [cameraStream, setCameraStream] = useState(null);
   const [voiceRecognition, setVoiceRecognition] = useState(null);
   const videoRef = useRef(null);
-  
-  useEffect(() => {
-    return () => {
-      stopWebcam();
-      stopVoice();
-    };
-  }, []);
+  const cleanupRef = useRef({ stopWebcam: null, stopVoice: null });
 
   // Manual Sliders
   const handleSliderChange = (emotionType, value) => {
@@ -27,17 +21,40 @@ const EmotionInput = ({ emotion, onChange, isConnected }) => {
   const startWebcam = async () => {
     try {
       setIsProcessing(true);
+      
+      // Check if video element is available
+      if (!videoRef.current) {
+        throw new Error('Video element not ready');
+      }
+
+      // Check if getUserMedia is supported
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera access not supported');
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { facingMode: "user" } 
       });
       
       videoRef.current.srcObject = stream;
+      videoRef.current.onloadedmetadata = () => {
+        videoRef.current.play().catch(err => {
+          console.error('Error playing video:', err);
+        });
+      };
+
       setCameraStream(stream);
       setInputMethod('webcam');
       startEmotionDetection();
     } catch (error) {
       console.error('Camera error:', error);
       setInputMethod('manual');
+      // Show user-friendly error message
+      alert(
+        error.name === 'NotAllowedError' ? 
+          'Please allow camera access to use this feature.' :
+          'Unable to access camera. Please try again or use manual input.'
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -50,6 +67,7 @@ const EmotionInput = ({ emotion, onChange, isConnected }) => {
     }
     setInputMethod('manual');
   };
+  cleanupRef.current.stopWebcam = stopWebcam;
 
   const startEmotionDetection = () => {
     // Simulated emotion detection (replace with real face analysis)
@@ -118,6 +136,15 @@ const EmotionInput = ({ emotion, onChange, isConnected }) => {
     }
     setInputMethod('manual');
   };
+  cleanupRef.current.stopVoice = stopVoice;
+
+  // Cleanup effect
+  useEffect(() => {
+    return () => {
+      cleanupRef.current.stopWebcam?.();
+      cleanupRef.current.stopVoice?.();
+    };
+  }, []);
 
   return (
     <div className="emotion-input">
