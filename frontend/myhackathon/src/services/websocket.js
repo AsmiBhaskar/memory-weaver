@@ -10,6 +10,17 @@ class WebSocketService {
     this.maxReconnectAttempts = 5;
     this.reconnectDelay = 5000;
     this.offlineQueue = [];
+    // Generate or get session ID
+    this.sessionId = this.getOrCreateSessionId();
+  }
+
+  getOrCreateSessionId() {
+    let sessionId = localStorage.getItem('emotion_session_id');
+    if (!sessionId) {
+      sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('emotion_session_id', sessionId);
+    }
+    return sessionId;
   }
 
   connect() {
@@ -22,7 +33,8 @@ class WebSocketService {
     this.isConnecting = true;
 
     try {
-      this.ws = new WebSocket('ws://localhost:8000/ws/emotions/');
+      // Include session ID in the WebSocket URL as a query parameter
+      this.ws = new WebSocket(`ws://localhost:8000/ws/emotions/?session_id=${this.sessionId}`);
       
       this.ws.onopen = () => {
         console.log('Connected to WebSocket');
@@ -68,8 +80,12 @@ class WebSocketService {
 
   sendEmotion(emotionData) {
     const message = {
-      type: 'emotion_update',
-      data: emotionData,
+      type: 'emotion_data',
+      session_id: this.sessionId,
+      joy: emotionData.joy || 0,
+      calm: emotionData.calm || 0,
+      energy: emotionData.energy || 0,
+      melancholy: emotionData.melancholy || 0,
       timestamp: new Date().toISOString()
     };
 

@@ -7,7 +7,18 @@ from .redis_utils import redis_manager
 
 class EmotionConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.session_id = self.scope['url_route']['kwargs']['session_id']
+        # Generate a session ID or get from query params
+        self.session_id = self.scope.get('url_route', {}).get('kwargs', {}).get('session_id')
+        if not self.session_id:
+            # Try to get from query string
+            query_string = self.scope.get('query_string', b'').decode()
+            if 'session_id=' in query_string:
+                self.session_id = query_string.split('session_id=')[1].split('&')[0]
+            else:
+                # Generate a unique session ID
+                import uuid
+                self.session_id = str(uuid.uuid4())
+        
         self.group_name = f'emotions_{self.session_id}'
         
         # Join session group
