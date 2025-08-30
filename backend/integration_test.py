@@ -24,7 +24,7 @@ def test_rest_api():
     
     # Test system health
     try:
-        response = requests.get(f"{BASE_URL}/emotions/api/system/", timeout=5)
+        response = requests.get(f"{BASE_URL}/emotions/api/system/health/", timeout=5)
         if response.status_code == 200:
             print("✅ System Health API: Working")
             success_count += 1
